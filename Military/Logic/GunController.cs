@@ -3,7 +3,7 @@ using Military.Helpers;
 using Military.Logic.Mode;
 using Military.Roles;
 using XenoCore.Buttons;
-using XenoCore.CustomOptions;
+using XenoCore.Utils;
 
 namespace Military.Logic {
 	public static class GunController {

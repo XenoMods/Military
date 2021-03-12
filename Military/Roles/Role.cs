@@ -72,7 +72,7 @@ namespace Military.Roles {
 		#region HELPERS
 
 		protected void CreateCooldown() {
-			Cooldown = new CooldownController(Prefix);
+			Cooldown = CooldownController.FromOption(Prefix);
 		}
 
 		protected void ClearTasks() {

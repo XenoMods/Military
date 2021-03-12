@@ -1,6 +1,5 @@
 using Military.Helpers;
 using UnityEngine;
-using XenoCore.Buttons;
 using XenoCore.Buttons.Strategy;
 using XenoCore.Utils;
 

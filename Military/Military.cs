@@ -20,7 +20,6 @@ using XenoCore.Override;
 using XenoCore.Override.Map;
 using XenoCore.Override.Map.Components;
 using XenoCore.Override.Tasks;
-using XenoCore.Override.Usable;
 using XenoCore.Utils;
 
 namespace Military {

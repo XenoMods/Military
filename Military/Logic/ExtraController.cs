@@ -6,7 +6,6 @@ using Military.Logic.Mode;
 using Military.Roles;
 using UnityEngine;
 using XenoCore.Buttons;
-using XenoCore.CustomOptions;
 using XenoCore.Utils;
 
 namespace Military.Logic {

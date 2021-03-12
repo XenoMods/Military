@@ -1,7 +1,5 @@
 using System.Reflection;
 using Military.Logic;
-using Reactor.Extensions;
-using Reactor.Unstrip;
 using UnityEngine;
 using XenoCore.Utils;
 
