@@ -1,0 +1,54 @@
+xeno.maps.impl.dust=de_dust
+xeno.maps.impl.castle=Замок
+
+m.role.enable=Включить %c%w
+m.team.enable=Включить %c%w
+m.role.title=-=%c%n%r=-
+
+m.teams=Команды:
+m.roles=Роли:
+m.points=Очки:
+m.point=Точка
+m.flag=Флаг
+
+m.person=%t %r
+
+m.vents=Вентиляции активны
+
+m.cooldown.respawn=Время респауна
+
+m.gamemode.ctf.vents=Вентиляции активны для флагоносца
+m.gamemode.cp.interval=Интервал возможности захвата точки
+m.gamemode.interval=Интервал пополнения очков за точки
+m.gamemode.max=Очков для победы
+m.gamemode=Режим игры
+
+m.gamemode.tdm=Битва
+m.gamemode.tdm.desc=Защищайте %cсвоих союзников%r и убивайте соперников
+
+m.gamemode.cp=Точки
+m.gamemode.cp.desc=Защищайте %c%which%r точки и атакуйте вражеские точки
+
+m.gamemode.ctf=Флаги
+m.gamemode.ctf.desc=Защищайте %cсвой%r флаг и пытайтесь принести к нему вражеские
+
+m.team.red.prefix=Красный
+m.team.red.whom=Красных
+m.team.red.which=Красные
+
+m.team.blue.prefix=Синий
+m.team.blue.whom=Синих
+m.team.blue.which=Синие
+
+m.team.green.prefix=Зелёный
+m.team.green.whom=Зелёных
+m.team.green.which=Зелёные
+
+m.team.yellow.prefix=Жёлтый
+m.team.yellow.whom=Жёлтых
+m.team.yellow.which=Жёлтые
+
+m.uber.health=Здоровье
+
+m.uber=Убер-Солдат
+m.uber.whom=Убер-Солдата

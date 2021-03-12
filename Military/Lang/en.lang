@@ -1,0 +1,54 @@
+xeno.maps.impl.dust=de_dust
+xeno.maps.impl.castle=Castle
+
+m.role.enable=Enable %c%w
+m.team.enable=Enable %c%w
+m.role.title=-=%c%n%r=-
+
+m.teams=Teams:
+m.roles=Roles:
+m.points=Points:
+m.point=Point
+m.flag=Flag
+
+m.person=%t %r
+
+m.vents=Vents are active
+
+m.cooldown.respawn=Respawn duration
+
+m.gamemode.ctf.vents=Vents are active for player with flag
+m.gamemode.cp.interval=Control point capturing interval
+m.gamemode.interval=Game score increase interval in Control Points
+m.gamemode.max=Points to win
+m.gamemode=Game Mode
+
+m.gamemode.tdm=Team Death Match
+m.gamemode.tdm.desc=Defend %cyour teammates%r and kill enemies
+
+m.gamemode.cp=Control Points
+m.gamemode.cp.desc=Defend %c%which%r control points and attack enemy control points
+
+m.gamemode.ctf=Capture The Flag
+m.gamemode.ctf.desc=Defend %cyour%r flag and try to capture enemy flag
+
+m.team.red.prefix=Red
+m.team.red.whom=Red
+m.team.red.which=Red
+
+m.team.blue.prefix=Blue
+m.team.blue.whom=Blue
+m.team.blue.which=Blue
+
+m.team.green.prefix=Green
+m.team.green.whom=Green
+m.team.green.which=Green
+
+m.team.yellow.prefix=Yellow
+m.team.yellow.whom=Yellow
+m.team.yellow.which=Yellow
+
+m.uber.health=Health
+
+m.uber=Uber-Soldier
+m.uber.whom=Uber-Soldier
