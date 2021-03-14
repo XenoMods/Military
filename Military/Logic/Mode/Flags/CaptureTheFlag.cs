@@ -2,23 +2,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Military.Component;
-using Military.Helpers;
+using Military.NetworkControllers;
 using UnityEngine;
 using XenoCore.Locale;
 using XenoCore.Override.Map;
 using XenoCore.Utils;
 
-namespace Military.Logic.Mode {
+namespace Military.Logic.Mode.Flags {
 	public class CaptureTheFlag : GameMode {
 		public static readonly CaptureTheFlag INSTANCE = new CaptureTheFlag();
 		
 		public override string Id => "ctf";
 
-		private readonly List<Flag> Flags = new List<Flag>();
-
 		protected override void Reset() {
 			base.Reset();
-			Flags.Clear();
+			FlagsController.Reset();
 		}
 
 		public override void InitMap() {
@@ -130,41 +128,32 @@ namespace Military.Logic.Mode {
 			}
 		}
 
-		private void AddFlag(float X, float Y, Team Team) {
+		private static void AddFlag(float X, float Y, Team Team) {
 			AddFlag(new Vector2(X, Y), Team);
 		}
 		
-		private void AddFlag(Vector2 Position, Team Team) {
-			Flags.Add(new Flag(Flags.Count, Team, Position));
-		}
-
-		private Vector2? GetPlayerSpawn(PlayerControl Player) {
-			var Team = Player.Extra().Team;
-			foreach (var Flag in Flags.Where(Flag => Flag.Team.Compare(Team))) {
-				return Flag.OriginalPosition + new Vector2(0f, 0.3636f);
-			}
-
-			return null;
+		private static void AddFlag(Vector2 Position, Team Team) {
+			FlagsController.AddFlag(Position, Team);
 		}
 
 		public override Vector2 HandleSpawnLocation(Vector2 Source, PlayerControl Player) {
-			return GetPlayerSpawn(Player) ?? Source;
+			return FlagsController.GetSpawn(Player) ?? Source;
 		}
 
 		public override void HandlePlayerRespawn(PlayerControl Player) {
-			var Spawn = GetPlayerSpawn(Player);
-			if (Spawn.HasValue) Player.NetTransform.SnapTo(Spawn.Value);
-			
-			foreach (var Flag in Flags.Where(Flag => Player.Compare(Flag.Capturer))) {
-				Flag.SetCapturer(-1);
+			var NewSpawn = FlagsController.GetSpawn(Player);
+			if (NewSpawn.HasValue) {
+				Player.NetTransform.SnapTo(NewSpawn.Value);
 			}
+
+			FlagsController.DropAll(Player);
 		}
 
 		public override void HandleAdditionalInfo(StringBuilder Builder) {
 			Builder.AppendLine();
 			var FlagText = LanguageManager.Get("m.flag");
 
-			foreach (var Flag in Flags) {
+			foreach (var Flag in FlagsController.GetFlags()) {
 				if (!Flag.Team.Enable) continue;
 				
 				var Color = Flag.Team.ColorFormat ?? Globals.FORMAT_WHITE;
@@ -182,41 +171,12 @@ namespace Military.Logic.Mode {
 					.AppendLine(Capturer.Data.PlayerName);
 			}
 		}
-		
-		public Flag GetFlagById(int No) {
-			return Flags[No];
-		}
-
-		public Flag WhatFlagPlayerCaptured() {
-			return WhatFlagPlayerCaptured(PlayerControl.LocalPlayer);
-		}
-
-		public Flag WhatFlagPlayerCaptured(PlayerControl Player) {
-			return Flags.FirstOrDefault(Flag => Player.Compare(Flag.Capturer));
-		}
 
 		public override bool CanVent(PlayerControl Player) {
 			if (Military.FlagCapturerVents.GetValue()) {
 				return true;
 			} else {
-				return WhatFlagPlayerCaptured(Player) == null;
-			}
-		}
-
-		public void OnFlagCaptured(int ToFlagId) {
-			var Team = GetFlagById(ToFlagId).Team;
-			Data.Add(Team);
-					
-			ExtraNetwork.Send(CustomRPC.AddPoints, Writer => {
-				Team.Write(Writer);
-				Writer.Write(1);
-			});
-			
-			var Winner = Data.CheckWinner();
-
-			if (Winner != null) {
-				Flags.Clear();
-				DoWin(Winner);
+				return FlagsController.GetCarryingFlag(Player) == null;
 			}
 		}
 	}

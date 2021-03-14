@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Hazel;
 using Military.Helpers;
-using Military.Logic.Mode;
+using Military.Logic;
 using Military.Roles;
 using UnityEngine;
+using XenoCore.Core;
 using XenoCore.CustomOptions;
 using XenoCore.Locale;
 using XenoCore.Utils;
 
-namespace Military.Logic {
+namespace Military.NetworkControllers {
 	public static class TeamsController {
 		private static readonly List<Team> Teams = new List<Team>();
 
@@ -65,13 +66,19 @@ namespace Military.Logic {
 				Team.AssignRoles();
 			}
 
-			ExtraNetwork.Send(CustomRPC.AssignTeamsAndRoles, Writer => {
-				Writer.Write(Teams.Count);
+			AssignTeamsAndRolesMessage.INSTANCE.Send(Teams);
+		}
+		
+		public static Team ReadTeam(this MessageReader Reader) {
+			var Id = Reader.ReadInt32();
+			return Id == -1 ? null : Teams[Id];
+		}
 
-				foreach (var Team in Teams) {
-					Team.ComplexSend(Writer);
-				}
-			});
+		public static void WriteTeam(this MessageWriter Writer, Team Team) {
+			Writer.Write(Team?.TeamId ?? -1);
+		}
+
+		public static void RegisterMessages(XenoMod Mod) {
 		}
 	}
 
@@ -84,8 +91,8 @@ namespace Military.Logic {
 		
 		public bool Enable => _Enable.GetValue();
 		
-		private static int CurrentTeamId = 0;
-		private readonly int TeamId;
+		private static int CurrentTeamId;
+		public readonly int TeamId;
 		
 		public readonly Color Color;
 		public readonly Color ProtectionColor;
@@ -112,18 +119,6 @@ namespace Military.Logic {
 				{"%w", () => LanguageManager.Get($"m.team.{Name}.whom")}
 			};
 			_Enable = MakeTeamToggle(Name, "enable", Arguments, GROUP_TEAMS);
-		}
-
-		public static Team Read(MessageReader Reader) {
-			return Read(Reader.ReadInt32());
-		}
-
-		public static Team Read(int TeamId) {
-			return TeamsController.GetTeams()[TeamId];
-		}
-
-		public void Write(MessageWriter Writer) {
-			Writer.Write(TeamId);
 		}
 
 		public bool Compare(Team Team) {
@@ -166,12 +161,8 @@ namespace Military.Logic {
 			}
 		}
 
-		public bool AddPoint(int Count = 1) {
-			return GameMode.Current.Data.Add(this, Count);
-		}
-
 		public void Win() {
-			GameMode.Current.Data.Reset();
+			ScoreController.Reset();
 			EndGameCentral.WinnerTeam = this;
 
 			ShipStatus.Instance.enabled = false;

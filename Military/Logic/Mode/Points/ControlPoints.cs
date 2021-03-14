@@ -3,30 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Military.Component;
-using Military.Helpers;
+using Military.NetworkControllers;
 using UnityEngine;
 using XenoCore.Locale;
 using XenoCore.Override.Map;
 using XenoCore.Utils;
 
-namespace Military.Logic.Mode {
+namespace Military.Logic.Mode.Points {
 	public class ControlPoints : GameMode {
 		public static readonly GameMode INSTANCE = new ControlPoints();
 		
 		public override string Id => "cp";
 
-		private readonly List<ControlPoint> Points = new List<ControlPoint>();
-
-		private DateTime LastUpdated;
-		
 		protected override void Reset() {
 			base.Reset();
-			Points.Clear();
+			PointsController.Reset();
 		}
 
 		public override void InitMap() {
 			base.InitMap();
-			LastUpdated = DateTime.Now;
+			PointsController.ResetTime();
 
 			var Map = PlayerControl.GameOptions.MapId;
 
@@ -70,58 +66,24 @@ namespace Military.Logic.Mode {
 			}
 		}
 
-		private void AddPoint(float X, float Y) {
-			AddPoint(new Vector2(X, Y));
+		private static void AddPoint(float X, float Y) {
+			PointsController.AddPoint(new Vector2(X, Y));
 		}
 		
-		private void AddPoint(Vector2 Position) {
-			Points.Add(new ControlPoint(Points.Count) {
-				Position = Position
-			});
+		private static void AddPoint(Vector2 Position) {
+			PointsController.AddPoint(Position);
 		}
 
 		public override void Update(float DeltaTime) {
 			base.Update(DeltaTime);
-
-			if (!AmongUsClient.Instance.AmHost) return;
-			var Difference = DateTime.Now - LastUpdated;
-			
-			if (Difference.Seconds >= Military.GameModeInterval.GetValue()) {
-				var Teams = TeamsController.GetTeams();
-
-				foreach (var Team in Teams) {
-					var Score = Points.Count(Point => Team.Compare(Point.CurrentTeam));
-
-					Data.Add(Team, Score);
-					
-					ExtraNetwork.Send(CustomRPC.AddPoints, Writer => {
-						Team.Write(Writer);
-						Writer.Write(Score);
-					});
-				}
-
-				var Winner = Data.CheckWinner();
-
-				if (Winner != null) {
-					Points.Clear();
-					DoWin(Winner);
-				}
-				
-				LastUpdated = DateTime.Now;
-			}
-		}
-
-		public override void HandleCapturePoint(int PointId, Team Team) {
-			if (PointId >= 0 && PointId < Points.Count) {
-				Points[PointId].CurrentTeam = Team;
-			}
+			PointsController.Update(DeltaTime);
 		}
 
 		public override void HandleAdditionalInfo(StringBuilder Builder) {
 			Builder.AppendLine();
 			var PointText = LanguageManager.Get("m.point");
 
-			foreach (var Point in Points) {
+			foreach (var Point in PointsController.GetPoints()) {
 				var Color = Point.CurrentTeam?.ColorFormat ?? Globals.FORMAT_WHITE;
 
 				Builder.Append(Color).Append(PointText).Append(' ').AppendLine(Point.Name);

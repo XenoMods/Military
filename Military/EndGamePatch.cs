@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Military.Logic;
+using Military.NetworkControllers;
 using XenoCore.Locale;
 using XenoCore.Override.Map;
 

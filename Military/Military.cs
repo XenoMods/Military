@@ -8,14 +8,15 @@ using Military.Component;
 using Military.Helpers;
 using Military.Logic;
 using Military.Logic.Mode;
+using Military.NetworkControllers;
 using Military.Roles;
 using Reactor;
 using UnityEngine;
 using XenoCore;
+using XenoCore.Core;
 using XenoCore.CustomOptions;
 using XenoCore.Events;
 using XenoCore.Locale;
-using XenoCore.Network;
 using XenoCore.Override;
 using XenoCore.Override.Map;
 using XenoCore.Override.Map.Components;
@@ -56,6 +57,8 @@ namespace Military {
 			return Logic.Mode.GameMode.GetKeys().Select(Key => $"m.gamemode.{Key}").ToArray();
 		}
 
+		public static readonly XenoMod Mod = new XenoMod(Id, "Military", Version, true);
+
 		public override void Load() {
 			Harmony.PatchAll();
 
@@ -72,14 +75,24 @@ namespace Military {
 			
 			LanguageManager.Load(Assembly.GetExecutingAssembly(), "Military.Lang.");
 			Role.Init();
-			VersionsList.Add("Military", Version, true);
 
 			TeamsController.Init();
-			HandleRpcPatch.AddListener(new RPCExtraRoles());
 
+			RegisterNetworkMessages();
 			RegisterComponents();
 			RegisterListeners();
 			RegisterCustomMaps();
+		}
+
+		private static void RegisterNetworkMessages() {
+			Mod.RegisterMessage(AssignTeamsAndRolesMessage.INSTANCE);
+			Mod.RegisterMessage(ShootMessage.INSTANCE);
+
+			FlagsController.RegisterMessages(Mod);
+			PointsController.RegisterMessages(Mod);
+			ScoreController.RegisterMessages(Mod);
+			TeamsController.RegisterMessages(Mod);
+			SoundsController.RegisterMessages(Mod);
 		}
 
 		private static void RegisterComponents() {

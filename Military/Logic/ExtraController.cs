@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Hazel;
 using Military.Helpers;
 using Military.Logic.Mode;
+using Military.NetworkControllers;
 using Military.Roles;
 using UnityEngine;
 using XenoCore.Buttons;

@@ -1,17 +1,19 @@
 using System;
+using Hazel;
 using Military.Helpers;
+using Military.NetworkControllers;
 using UnityEngine;
 using XenoCore.Override.Tasks;
 using XenoCore.Override.Usable;
 using XenoCore.Utils;
 using Object = UnityEngine.Object;
 
-namespace Military.Logic {
+namespace Military.Logic.Mode.Points {
 	public class ControlPoint : CustomUsable {
 		public override float UsableDistance => 2f;
 		public override Sprite UseIcon => PlayerControl.LocalPlayer.Extra().Team.CaptureIcon;
 
-		private readonly int No;
+		public readonly int No;
 		private readonly GameObject PointObject;
 		private readonly MapIcon MapIcon;
 		
@@ -107,13 +109,15 @@ namespace Military.Logic {
 			}
 			
 			LastUsed = DateTime.Now;
+			PointsPreController.Use(this);
+		}
 
-			CurrentTeam = PlayerControl.LocalPlayer.Extra().Team;
+		public void WriteTeam(MessageWriter Writer) {
+			Writer.WriteTeam(CurrentTeam);
+		}
 
-			ExtraNetwork.Send(CustomRPC.CapturePoint, Writer => {
-				Writer.Write(No);
-				CurrentTeam.Write(Writer);
-			});
+		public void ReadTeam(MessageReader Reader) {
+			CurrentTeam = Reader.ReadTeam();
 		}
 	}
 }

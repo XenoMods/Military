@@ -3,6 +3,7 @@ using Military.Helpers;
 using Military.Logic.Mode;
 using Military.Roles;
 using XenoCore.Buttons;
+using XenoCore.Core;
 using XenoCore.Utils;
 
 namespace Military.Logic {
@@ -76,17 +77,44 @@ namespace Military.Logic {
 			
 			var Target = ModActions.Shoot.CurrentTarget;
 			if (Target == null) return;
-			
-			ExtraNetwork.Send(CustomRPC.Shoot, Writer => {
-				Writer.Write(Target.PlayerId);
-				Writer.Write(CurrentGun.Damage);
-			});
 
-			if (Target.Extra().DoDamage(CurrentGun.Damage)) {
-				GameMode.Current.HandleKill();
-			}
-			
 			Cooldown.Use();
+			GunPreController.Shoot(Target, CurrentGun.Damage);
+		}
+
+		public static void DoShoot(PlayerControl From, PlayerControl Target, int Damage) {
+			if (Target.Extra().DoDamage(Damage)) {
+				GameMode.Current.HandleKill(From, Target);
+			}
+		}
+	}
+
+	public static class GunPreController {
+		public static void Shoot(PlayerControl Target, int Damage) {
+			if (Game.IsHost()) {
+				GunController.DoShoot(PlayerControl.LocalPlayer, Target, Damage);
+			} else {
+				ShootMessage.INSTANCE.Send(Target, Damage);
+			}
+		}
+	}
+	
+	internal class ShootMessage : Message {
+		public static readonly ShootMessage INSTANCE = new ShootMessage();
+
+		private ShootMessage() {
+		}
+		
+		protected override void Handle() {
+			GunController.DoShoot(ReadPlayer(), ReadPlayer(), Reader.ReadInt32());
+		}
+
+		public void Send(PlayerControl Target, int Damage) {
+			Write(Writer => {
+				WriteLocalPlayer();
+				WritePlayer(Target);
+				Writer.Write(Damage);
+			});
 		}
 	}
 }

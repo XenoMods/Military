@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Military.Logic;
+using Military.NetworkControllers;
 using UnityEngine;
 using XenoCore.Buttons;
 using XenoCore.CustomOptions;

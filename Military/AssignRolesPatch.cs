@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using Military.Logic;
+using Military.NetworkControllers;
 using UnhollowerBaseLib;
 
 namespace Military {
