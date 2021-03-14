@@ -14,6 +14,7 @@ m.flag=Флаг
 m.person=%t %r
 
 m.vents=Вентиляции активны
+m.teams_affinity=Привязка к командам
 
 m.cooldown.respawn=Время респауна
 

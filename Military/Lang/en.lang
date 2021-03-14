@@ -14,6 +14,7 @@ m.flag=Flag
 m.person=%t %r
 
 m.vents=Vents are active
+m.teams_affinity=Team affinity
 
 m.cooldown.respawn=Respawn duration
 

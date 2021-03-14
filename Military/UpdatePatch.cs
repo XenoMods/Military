@@ -1,6 +1,8 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
 using Military.Logic;
 using Military.Logic.Mode;
+using Military.NetworkControllers;
 using Military.Roles;
 using UnityEngine;
 using XenoCore.Utils;
@@ -19,7 +21,21 @@ namespace Military {
 		private static readonly Color PROTECTION = new Color(1f, 1f, 1f, 0.5f);
 
 		public static void Postfix(HudManager __instance) {
-			if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) return;
+			if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started) {
+				foreach (var Control in PlayerControl.AllPlayerControls) {
+					Control.nameText.Color = Color.white;
+				}
+				
+				if (!Military.TeamAffinity.GetValue()) return;
+
+				foreach (var (Team, Players) in TeamAffinityController.GetAffinities()) {
+					foreach (var Player in Players.Select(PlayerTools.GetPlayerById)) {
+						Player.nameText.Color = Team.Color;
+					}
+				}
+
+				return;
+			}
 
 			if (!__instance.Chat.isActiveAndEnabled) {
 				__instance.Chat.SetVisible(true);

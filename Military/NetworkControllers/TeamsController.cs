@@ -54,12 +54,24 @@ namespace Military.NetworkControllers {
 				throw new Exception("No teams enabled");
 			}
 
-			foreach (var Player in Players) {
-				var CurrentTeam = EnabledTeams[TeamIndex];
-				TeamIndex = (TeamIndex + 1) % EnabledTeams.Count;
+			if (Military.TeamAffinity.GetValue()) {
+				var Affinities = TeamAffinityController.GetAffinities();
 
-				CurrentTeam.Players.Add(Player);
-				Player.Extra().SetTeam(CurrentTeam);
+				foreach (var (Team, TeamPlayers) in Affinities) {
+					foreach (var Player in TeamPlayers.Select(PlayerTools.GetPlayerById)) {
+						Team.Players.Add(Player);
+						Player.Extra().SetTeam(Team);
+					}
+				}
+				TeamAffinityController.Reset();
+			} else {
+				foreach (var Player in Players) {
+					var CurrentTeam = EnabledTeams[TeamIndex];
+					TeamIndex = (TeamIndex + 1) % EnabledTeams.Count;
+
+					CurrentTeam.Players.Add(Player);
+					Player.Extra().SetTeam(CurrentTeam);
+				}
 			}
 
 			foreach (var Team in Teams) {
@@ -76,6 +88,10 @@ namespace Military.NetworkControllers {
 
 		public static void WriteTeam(this MessageWriter Writer, Team Team) {
 			Writer.Write(Team?.TeamId ?? -1);
+		}
+
+		public static Team GetByName(string TeamName) {
+			return Teams.FirstOrDefault(Team => Team.Name == TeamName);
 		}
 
 		public static void RegisterMessages(XenoMod Mod) {

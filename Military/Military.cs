@@ -4,6 +4,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.IL2CPP;
 using HarmonyLib;
+using Military.Commands;
 using Military.Component;
 using Military.Helpers;
 using Military.Logic;
@@ -13,6 +14,7 @@ using Military.Roles;
 using Reactor;
 using UnityEngine;
 using XenoCore;
+using XenoCore.Commands;
 using XenoCore.Core;
 using XenoCore.CustomOptions;
 using XenoCore.Events;
@@ -40,6 +42,8 @@ namespace Military {
 		private static readonly TitleOption Dummy = CustomOption.AddTitle("");
 		public static readonly CustomToggleOption Vents = CustomOption.AddToggle("m.vents",
 			true);
+		public static readonly CustomToggleOption TeamAffinity = CustomOption
+			.AddToggle("m.teams_affinity", true);
 		public static readonly CustomNumberOption RespawnTime = CustomOption
 			.AddNumber("m.cooldown.respawn", 5, 1, 100, 1);
 		public static readonly CustomStringOption GameMode = CustomOption.AddString("m.gamemode",
@@ -64,6 +68,7 @@ namespace Military {
 
 			Dummy.Group = ER_GROUP;
 			Vents.Group = ER_GROUP;
+			TeamAffinity.Group = ER_GROUP;
 			GameMode.Group = ER_GROUP;
 			RespawnTime.Group = ER_GROUP;
 			MaxPoints.Group = ER_GROUP;
@@ -77,16 +82,20 @@ namespace Military {
 			Role.Init();
 
 			TeamsController.Init();
+			TeamAffinityController.Init();
 
 			RegisterNetworkMessages();
 			RegisterComponents();
 			RegisterListeners();
 			RegisterCustomMaps();
+			
+			CommandsController.Register(new TeamAffinityCommand());
 		}
 
 		private static void RegisterNetworkMessages() {
 			Mod.RegisterMessage(AssignTeamsAndRolesMessage.INSTANCE);
 			Mod.RegisterMessage(ShootMessage.INSTANCE);
+			Mod.RegisterMessage(TeamAffinityMessage.INSTANCE);
 
 			FlagsController.RegisterMessages(Mod);
 			PointsController.RegisterMessages(Mod);
