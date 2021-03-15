@@ -39,11 +39,7 @@ namespace Military.Commands {
 			
 			Callback.Send($"Вы успешно привязаны к команде {Whom}!");
 
-			if (Game.IsHost()) {
-				TeamAffinityController.SetAffinity(PlayerControl.LocalPlayer, Team);				
-			} else {
-				TeamAffinityMessage.INSTANCE.Send(Team);
-			}
+			TeamAffinityController.PreSetAffinity(Team);
 		}
 	}
 

@@ -18,6 +18,7 @@ namespace Military.Helpers {
 
 		public static readonly Sprite FLAG_ICON = LOADER.Sprite("FlagIcon.png");
 		public static readonly Sprite POINT_ICON = LOADER.Sprite("PointIcon.png");
+		public static readonly Sprite TEAM_ICON = LOADER.Sprite("TeamIcon.png");
 
 		public static readonly BundleDefinition BUNDLE = LOADER.Bundle("military");
 

@@ -76,6 +76,7 @@ namespace Military {
 			ControlPointUseInterval.Group = ER_GROUP;
 			FlagCapturerVents.Group = ER_GROUP;
 
+			IndependendColorsFix.Enable();
 			TasksOverlay.Enable();
 			
 			LanguageManager.Load(Assembly.GetExecutingAssembly(), "Military.Lang.");

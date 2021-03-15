@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Hazel;
+using Military.Commands;
 using XenoCore.Core;
 using XenoCore.Utils;
 
@@ -69,6 +70,14 @@ namespace Military.NetworkControllers {
 				for (var x = 0; x < PlayersCount; x++) {
 					Affinities[Team].Add(Reader.ReadByte());
 				}
+			}
+		}
+
+		public static void PreSetAffinity(Team Team) {
+			if (Game.IsHost()) {
+				SetAffinity(PlayerControl.LocalPlayer, Team);				
+			} else {
+				TeamAffinityMessage.INSTANCE.Send(Team);
 			}
 		}
 	}
