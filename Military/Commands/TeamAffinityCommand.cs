@@ -4,6 +4,7 @@ using Military.NetworkControllers;
 using XenoCore.Commands;
 using XenoCore.Core;
 using XenoCore.Locale;
+using XenoCore.Utils;
 
 namespace Military.Commands {
 	public class TeamAffinityCommand : ICommand {
@@ -11,12 +12,13 @@ namespace Military.Commands {
 		public string Usage() => $"/team [{string.Join('|', MakeTeams())}]";
 
 		private static IEnumerable<string> MakeTeams() {
+			
 			return TeamsController.GetTeams().Select(Team => Team.Name);
 		}
 
 		public void Run(ChatCallback Callback, List<string> Args) {
 			if (Args.Count == 0) {
-				this.UsageError(Callback, "Укажите название команды!");
+				this.UsageError(Callback, "Укажите название команды, которую хотите выбрать");
 				return;
 			}
 
@@ -29,10 +31,19 @@ namespace Military.Commands {
 			}
 
 			var Whom = LanguageManager.Get($"m.team.{TeamName}.whom");
+			
+			if (!Team.Enable) {
+				Callback.Send($"К сожалению, команда {Whom} выключена");
+				return;
+			}
+			
 			Callback.Send($"Вы успешно привязаны к команде {Whom}!");
 
-			TeamAffinityController.SetAffinity(PlayerControl.LocalPlayer, Team);
-			TeamAffinityMessage.INSTANCE.Send(Team);
+			if (Game.IsHost()) {
+				TeamAffinityController.SetAffinity(PlayerControl.LocalPlayer, Team);				
+			} else {
+				TeamAffinityMessage.INSTANCE.Send(Team);
+			}
 		}
 	}
 

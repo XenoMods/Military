@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using Military.Logic;
 using Military.NetworkControllers;
 using XenoCore.Core;
-using XenoCore.Utils;
 
 namespace Military {
 	internal class AssignTeamsAndRolesMessage : Message {

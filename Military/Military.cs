@@ -104,6 +104,7 @@ namespace Military {
 			TeamsController.RegisterMessages(Mod);
 			SoundsController.RegisterMessages(Mod);
 			HealthController.RegisterMessages(Mod);
+			TeamAffinityController.RegisterMessages(Mod);
 		}
 
 		private static void RegisterComponents() {

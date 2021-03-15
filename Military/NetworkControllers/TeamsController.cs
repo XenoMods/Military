@@ -135,6 +135,11 @@ namespace Military.NetworkControllers {
 				{"%w", () => LanguageManager.Get($"m.team.{Name}.whom")}
 			};
 			_Enable = MakeTeamToggle(Name, "enable", Arguments, GROUP_TEAMS);
+			_Enable.ValueChanged += (Sender, Args) => {
+				if (!_Enable.GetValue()) {
+					TeamAffinityController.TeamDisabled(this);
+				}
+			};
 		}
 
 		public bool Compare(Team Team) {

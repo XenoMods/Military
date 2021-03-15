@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
-using Military.Logic;
 using Military.Logic.Mode.Flags;
 using UnityEngine;
 using XenoCore.Core;

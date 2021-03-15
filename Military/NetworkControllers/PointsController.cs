@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
-using Military.Logic;
 using Military.Logic.Mode.Points;
 using UnityEngine;
 using XenoCore.Core;
