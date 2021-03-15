@@ -153,7 +153,12 @@ namespace Military.NetworkControllers {
 			switch (State) {
 				case ExtraState.SPAWNING: {
 					Player.moveable = false;
-					Player.MyPhysics.body.velocity = Vector2.zero;
+					try {
+						Player.MyPhysics.body.velocity = Vector2.zero;
+					} catch (Exception) {
+						// ignored
+						// Временное решение
+					}
 
 					if (RespawnCooldown.IsReady()) {
 						SetState(ExtraState.READY);
