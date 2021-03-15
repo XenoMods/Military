@@ -5,6 +5,7 @@ using Military.Logic;
 using UnityEngine;
 using XenoCore.Buttons;
 using XenoCore.Buttons.Strategy;
+using XenoCore.Events;
 
 namespace Military.Roles {
 	public enum ActionType {
@@ -21,17 +22,18 @@ namespace Military.Roles {
 		GUN_SET_9,
 		MEDPACK_SET,
 	}
-
-	[HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
-	public class ModActions {
+	
+	public static class ModActions {
 		// public static GunOverlay GunOverlay;
 		public static UniversalButton Shoot;
 		public static UniversalButton Gun;
 
-		public static void Postfix() {
-			// GunOverlay = ExtraResources.GUN_OVERLAY.Build();
-			Shoot = UniversalButton.FromKillButton();
-			Gun = Make(new Vector2(0.5f, 0), ActionType.GUN);
+		public static void Init() {
+			EventsController.HUD_START.Register(() => {
+				// GunOverlay = ExtraResources.GUN_OVERLAY.Build();
+				Shoot = UniversalButton.FromKillButton();
+				Gun = Make(new Vector2(0.5f, 0), ActionType.GUN);
+			});
 		}
 
 		private static UniversalButton Make(Vector2 Offset, ActionType Type) {

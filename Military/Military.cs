@@ -83,6 +83,7 @@ namespace Military {
 
 			TeamsController.Init();
 			TeamAffinityController.Init();
+			ModActions.Init();
 
 			RegisterNetworkMessages();
 			RegisterComponents();
