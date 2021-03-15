@@ -105,7 +105,13 @@ namespace Military.NetworkControllers {
 				RespawnCooldown.LastUsedFromNow(0);
 				Player.moveable = false;
 			} else if (NewState == ExtraState.READY) {
-				Player.MyPhysics.ResetAnim();
+				try {
+					Player.MyPhysics.ResetAnim();
+				} catch (Exception) {
+					// Ignored
+					// Временное решение
+				}
+
 				ResetHealth();
 				
 				Player.moveable = true;
