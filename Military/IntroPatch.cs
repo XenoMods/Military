@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Military.Logic;
 using Military.Logic.Mode;
+using Military.NetworkControllers;
 using XenoCore.Locale;
 using XenoCore.Utils;
 

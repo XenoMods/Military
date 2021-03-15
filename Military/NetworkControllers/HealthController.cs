@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using Hazel;
 using Military.Helpers;
+using Military.Logic;
 using Military.Logic.Mode;
-using Military.NetworkControllers;
 using Military.Roles;
 using UnityEngine;
 using XenoCore.Buttons;
+using XenoCore.Core;
 using XenoCore.Utils;
 
-namespace Military.Logic {
-	public static class ExtraController {
+namespace Military.NetworkControllers {
+	public static class HealthController {
 		private static readonly Dictionary<byte, ExtraData> ExtraData
 			= new Dictionary<byte, ExtraData>();
 
@@ -25,11 +26,11 @@ namespace Military.Logic {
 			
 			return ExtraData[Player.PlayerId];
 		}
-	}
-
-	public enum ExtraState {
-		SPAWNING,
-		READY,
+		
+		public static void RegisterMessages(XenoMod Mod) {
+			Mod.RegisterMessage(NetworkControllers.ExtraData.DamageMessage.INSTANCE);
+			Mod.RegisterMessage(NetworkControllers.ExtraData.RespawnMessage.INSTANCE);
+		}
 	}
 
 	public class ExtraData {
@@ -117,7 +118,7 @@ namespace Military.Logic {
 			SetState(ExtraState.SPAWNING);
 		}
 
-		public bool DoDamage(int Damage) {
+		private void DamageSfx(int Damage) {
 			if (Damage >= 0) {
 				Player.KillSfx.PlayPositioned(Player.GetTruePosition(),
 					AudioManager.EffectsScale(0.8f));
@@ -126,16 +127,21 @@ namespace Military.Logic {
 				ExtraResources.SND_HEAL.PlayPositioned(Player.GetTruePosition(),
 					AudioManager.EffectsScale(0.8f));
 			}
+		}
 
+		public bool DoDamage(int Damage) {
 			Health -= Damage;
 
 			if (Health > MaxHealth) {
 				Health = MaxHealth;
 			}
 			
+			DamageMessage.INSTANCE.Send(this, Damage);
+			DamageSfx(Damage);
 			UpdateHealth();
 
 			if (Health <= 0) {
+				RespawnMessage.INSTANCE.Send(this);
 				Respawn();
 				return true;
 			}
@@ -159,10 +165,54 @@ namespace Military.Logic {
 				}
 			}
 		}
+		
+		public enum ExtraState {
+			SPAWNING,
+			READY,
+		}
 
 		private class RespawnCooldownProvider : INumberProvider {
 			public float GetValue() {
 				return Military.RespawnTime.GetValue();
+			}
+		}
+
+		internal class DamageMessage : Message {
+			public static readonly DamageMessage INSTANCE = new DamageMessage();
+
+			private DamageMessage() {
+			}
+		
+			protected override void Handle() {
+				var Data = ReadPlayer().Extra();
+				Data.Health = Reader.ReadInt32();
+				Data.UpdateHealth();
+				Data.DamageSfx(Reader.ReadInt32());
+			}
+
+			public void Send(ExtraData Data, int Damage) {
+				Write(Writer => {
+					WritePlayer(Data.Player);
+					Writer.Write(Data.Health);
+					Writer.Write(Damage);
+				});
+			}
+		}
+		
+		internal class RespawnMessage : Message {
+			public static readonly RespawnMessage INSTANCE = new RespawnMessage();
+
+			private RespawnMessage() {
+			}
+		
+			protected override void Handle() {
+				ReadPlayer().Extra().Respawn();
+			}
+
+			public void Send(ExtraData Data) {
+				Write(Writer => {
+					WritePlayer(Data.Player);
+				});
 			}
 		}
 	}

@@ -102,6 +102,7 @@ namespace Military {
 			ScoreController.RegisterMessages(Mod);
 			TeamsController.RegisterMessages(Mod);
 			SoundsController.RegisterMessages(Mod);
+			HealthController.RegisterMessages(Mod);
 		}
 
 		private static void RegisterComponents() {
@@ -118,7 +119,7 @@ namespace Military {
 
 				TeamsController.ResetAll();
 				ModActions.ResetAll();
-				ExtraController.ResetAll();
+				HealthController.ResetAll();
 				EndGameCentral.ResetAll();
 				Logic.Mode.GameMode.ResetAll();
 			});
