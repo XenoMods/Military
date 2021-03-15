@@ -63,6 +63,14 @@ namespace Military.NetworkControllers {
 						Player.Extra().SetTeam(Team);
 					}
 				}
+				foreach (var Control in PlayerControl.AllPlayerControls) {
+					var Extra = Control.Extra();
+					if (Extra.Team != null) continue;
+					
+					var Team = EnabledTeams[0];
+					Team.Players.Add(Control);
+					Extra.SetTeam(Team);
+				}
 				TeamAffinityController.Reset();
 			} else {
 				foreach (var Player in Players) {
